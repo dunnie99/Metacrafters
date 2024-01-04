@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract CustomToken {
+contract Token {
     // Public variables
     string public name;
     string public symbol;
