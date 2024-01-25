@@ -6,9 +6,18 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Organization is ERC20 {
     //Events
     event memberAdded(address user, bool iswhitelisted);
+    event vestedReturned(
+        address user,
+        uint256 vestedAmount,
+        uint256 rewardToken
+    );
+    event Owner (address );
 
     //deployer
     address public admin;
+    address public tokenVested;
+    string tokenVestedName;
+    string tokenVestedSym;
     uint256 totalInPool;
 
     // Type of stakeholder
@@ -22,18 +31,28 @@ contract Organization is ERC20 {
         string role;
         bool isWhitelisted;
         uint256 investedAmount;
+        uint256 startTime;
         uint256 withdrawalTimestamp;
     }
 
     mapping(address => User) public UserInfo;
     mapping(string => Holder) public Holders;
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Not authorized");
-        _;
+    
+    function onlyAdmin () view internal{
+         require(msg.sender == admin, "Not authorized");
     }
-    constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) {
-        admin = msg.sender;
-        
+
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        address _tokenVested,
+        address _admin
+    ) ERC20("Reward", "RWD") {
+        admin = _admin;
+        tokenVested = _tokenVested;
+        tokenVestedName = _name;
+        tokenVestedSym = _symbol;
+        emit Owner(admin);
     }
 
     //201 600
@@ -41,10 +60,10 @@ contract Organization is ERC20 {
         string memory _holder,
         uint256 _vestingPeriod,
         uint256 _minimalAmount
-    ) external onlyAdmin {
-        require(_vestingPeriod >= 10 days, "vesting period too short");
+    ) external  {
+        onlyAdmin();
         Holders[_holder] = Holder({
-            timelock: _vestingPeriod,
+            timelock: _vestingPeriod + 10 days,
             minimalAmount: _minimalAmount
         });
     }
@@ -61,55 +80,64 @@ contract Organization is ERC20 {
         string memory _holderType,
         uint256 _vestAmount,
         uint256 _withdrawalStamp
-    ) public payable {
+    ) public {
         require(
-            msg.value >= Holders[_holderType].minimalAmount,
+            _vestAmount >= Holders[_holderType].minimalAmount,
             "Invalid stake amount"
+        );
+        IERC20(tokenVested).transferFrom(
+            msg.sender,
+            address(this),
+            _vestAmount
         );
         UserInfo[msg.sender] = User({
             role: _holderType,
             isWhitelisted: true,
             investedAmount: _vestAmount,
+            startTime: block.timestamp,
             withdrawalTimestamp: Holders[_holderType].timelock +
                 _withdrawalStamp
         });
-        totalInPool+= msg.value;
-
-
+        totalInPool += _vestAmount;
 
         emit memberAdded(msg.sender, true);
     }
 
     function getUserInfo(
         address _user
-    ) public view returns (string memory, bool, uint256, uint256) {
+    ) public view returns (string memory, bool, uint256, uint256, uint256) {
         User storage ms = UserInfo[_user];
         return (
             ms.role,
             ms.isWhitelisted,
             ms.investedAmount,
+            ms.startTime,
             ms.withdrawalTimestamp
         );
     }
 
-    function calInterest(address _user) internal view returns (uint256) {
+    function calInterest(address _user) public view returns (uint256) {
         calVesttime(_user);
         uint256 staked = UserInfo[_user].investedAmount;
-        uint256 userFrac = staked / totalInPool * 20  ;
+        uint256 userFrac = (staked / totalInPool) * 20;
         return userFrac;
-
     }
 
     function calVesttime(address _user) internal view {
         uint256 drawTime = UserInfo[_user].withdrawalTimestamp;
         require(block.timestamp > drawTime, "Lock time still on");
-        
     }
-    
+
     function withdrawal(address _user) public {
         User storage ms = UserInfo[_user];
         require(ms.isWhitelisted == true, "user not whitelisted");
         uint256 intr = calInterest(_user);
+        uint256 returnvalue = ms.investedAmount;
+        ms.investedAmount = 0;
+        ms.startTime = 0;
+        ms.withdrawalTimestamp = 0;
         _mint(_user, intr);
+        IERC20(tokenVested).transfer( _user, returnvalue);
+        emit vestedReturned(_user, returnvalue, intr);
     }
 }
