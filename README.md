@@ -1,1 +1,1 @@
-## This contains all my project on metacrafters
+## This folder contains all my projects and lessons on metacrafters
