@@ -25,28 +25,35 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Get started by deploying a dashboard{" "}
-          <code className={styles.code}>for your organization</code>
+          Get started by deploying a dashboard{" "}for your organization...
         </p>
 
-        <div className={styles.grid}>
-          <a className={styles.card} href="https://github.com/dunnie99/Metacrafters">
-            <h2>Vested App Documentation &rarr;</h2>
-            <p>Learn about us.</p>
-          </a>
-
-          <a
-            className={styles.card}
-            href=""
-          >
-            <h2>Go to your dashboard &rarr;</h2>
-            <p>Already have your dashboard?</p>
-          </a>
-          
+        <div className={styles.grid}>          
           <Link className={styles.card} href="/createform">
             <h2>Deploy your dashboard &rarr;</h2>
             <p>Instantly deploy a vested token dashboard of your own</p>
           </Link>
+
+          <a
+            className={styles.card}
+            href="/userreg"
+          >
+            <h2>Go to your dashboard &rarr;</h2>
+            <p>Initialize stakeholders and register users</p>
+          </a>
+
+          <a
+            className={styles.card}
+            href="/userreg"
+          >
+            <h2>Withdraw Vested Token &rarr;</h2>
+            <p>Withdraw vested tokens and earn your reward</p>
+          </a>
+
+          <a className={styles.card} href="https://github.com/dunnie99/Metacrafters/tree/main/deFi-Dapp">
+            <h2>Vested App Documentation &rarr;</h2>
+            <p>Learn how to deploy your own DApp.</p>
+          </a>
         </div>
       </main>
 
