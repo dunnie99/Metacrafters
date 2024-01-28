@@ -1,10 +1,41 @@
 # Organization Contract Overview
 
-The Organization contract is a token management system on the Ethereum blockchain, specifically designed for ERC-20 tokens. It provides functionalities for adding stakeholders, managing user roles, and whitelisting users. This guide will walk you through the steps to use the Organization contract.
+The Organization contract is a token management system on the Ethereum blockchain, specifically designed for ERC-20 tokens. It provides functionalities for adding stakeholders, managing user roles, register users for vesting, whitelisting users and withdrawing vested tokens. This guide will walk you through the steps to use the Organization contract.
 
-**1. Deployment of the Contract**
+### Set up Hardhat Environment
+To begin setting up the Hardhat environment for your smart contract implementation, you will first need to create a new folder on your system. You can do this by using the ‘mkdir’ command in your terminal followed by the desired name of your folder. For example:
+```
+mkdir OrgDapp
+
+cd OrgDapp
+
+code .
+```
+
+To create this contract, we'll need to generate two files by following this step accordingly to clone the project:
+```
+$ git clone https://github.com/dunnie99/Metacrafters/tree/main/deFi-Dapp.git
+
+run: 
+
+$ npm install 
+
+(to install necessary dependencies)
+```
+
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat run scripts/deploy.ts
+```
+
+### Deployment of the Contract
 The first step is to deploy the contract on the Ethereum blockchain. The account that deploys the contract becomes the admin of the contract.
-- **Parameters:**
+
+- **Parameters**
+
     **_name:** _name represents the name of the ERC20 token that will be deployed as part of the Organization contract.
 
     **_symbol:** _symbol represents the symbol of the ERC20 token that will be deployed as part of the Organization contract.
@@ -19,7 +50,9 @@ Once the contract is deployed, stakeholders can be added using the addStakeholde
 
 ```
 _holder: The address of the stakeholder.
+
 _vestingPeriod: The time period for which the stakeholder's tokens are locked.
+
 _minimalAmount: The minimum amount of tokens the stakeholder must hold.
 ```
 
@@ -85,10 +118,12 @@ TThe primary goal of the factory contract is to create new instances of the Orga
 
 **Getting the Address of an Organization**: The getOrganization function can be used to get the address of an Organization contract. This function takes the admin's address as an argument and returns the address of the Organization contract.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+## Authors
+
+ Oluwadunnie Rachael 
+ [@LaDunnie99](https://twitter.com/LaDunnie99)
+
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details
