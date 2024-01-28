@@ -36,7 +36,7 @@ const Home: NextPage = () => {
 
           <a
             className={styles.card}
-            href="/userreg"
+            href="/dash"
           >
             <h2>Go to your dashboard &rarr;</h2>
             <p>Initialize stakeholders and register users</p>

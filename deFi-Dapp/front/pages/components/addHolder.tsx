@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Container } from './container';
+import child_abi from '../api/child_abi.json';
 import factory_abi from '../api/factory_abi.json';
 import factory_address from '../api/factory_address';
 import React, { useEffect, useState } from 'react';
@@ -8,15 +9,12 @@ import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite 
 import { Button } from './Button';
 
 
-export function CreateOrg() {
+export function AddHolder() {
 
-    const [tokenName, settokenName] = useState('');
-    const [tokenSymbol, settokenSymbol] = useState('');
-    const [tokenAddress, setTokenAddress] = useState('');
-    const [admin, setAdmin] = useState('');
+    const [holder, setholder] = useState('');
+    const [vestingPeriod, setvestingPeriod] = useState(0);
+    const [minimalAmount, setminimalAmount] = useState(0);
     const [singleAccount, setSingleAccount] = useState<any>("");
-    const [addr, setAddr] = useState("");
-    const [done, setdone] = useState<Boolean>(false);
     const [connectedAddr, setConnectedAddr] = useState<any>("");
 
 
@@ -24,19 +22,19 @@ export function CreateOrg() {
     const { address } = useAccount();
 
 
-    const Createorg = () => {
-        console.log("creating company");
-        createOrgWrite?.();
+    const AddHolder = () => {
+        console.log("adding role...");
+        addHolderWrite?.();
     };
 
-    const { config: CreateOrgConfig } = usePrepareContractWrite({
-        address: factory_address,
-        abi: factory_abi,
-        functionName: "createOrg",
-        args: [tokenName, tokenSymbol, tokenAddress, admin],
+    const { config: AddHolderConfig } = usePrepareContractWrite({
+        address: singleAccount,
+        abi: child_abi,
+        functionName: "addStakeholder",
+        args: [holder, vestingPeriod, minimalAmount],
     });
 
-    const { data: createOrgData, isLoading: createOrgIsLoading, isError: createOrgIsError, write: createOrgWrite } = useContractWrite(CreateOrgConfig);
+    const { data: addHolderData, isLoading: addHolderIsLoading, isError: addHolderIsError, write: addHolderWrite } = useContractWrite(AddHolderConfig);
 
 
     const { data: orgAddr, isLoading: yourOrgIsLoading, isError: yourOrgIsError } = useContractRead({
@@ -66,48 +64,38 @@ export function CreateOrg() {
                 <div className='space-y-4'>
 
                     <div className='flex flex-col gap-2'>
-                        <label htmlFor="org_name">Company Name</label>
+                        <label htmlFor="holder_name">Holder Name</label>
                         <input
                             type="text"
-                            name="org_name"
+                            name="holder_name"
                             id=""
-                            onChange={(e) => { settokenName(e.target.value); }}
+                            onChange={(e) => { setholder(e.target.value); }}
                             className='w-full shadow-inner p-2 px-4 ring-1 ring-zinc-200 rounded-md outline-none bg-zinc-50'
                         />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <label htmlFor="org_symbol">Company Symbol</label>
+                        <label htmlFor="timelock">Timelock</label>
                         <input
-                            type="text"
-                            name="org_symbol"
+                            type="Number"
+                            name="timelock"
                             id=""
-                            onChange={(e) => { settokenSymbol(e.target.value); }}
+                            onChange={(e) => { setvestingPeriod(Number(e.target.value)); }}
                             className='w-full shadow-inner p-2 px-4 ring-1 ring-zinc-200 rounded-md outline-none bg-zinc-50 '
                         />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <label htmlFor="token_address">Token Address</label>
+                        <label htmlFor="minimalAmount">Minimal Amount</label>
                         <input
-                            type="text"
-                            name="token_address"
+                            type="Number"
+                            name="minimalAmount"
                             id=""
-                            onChange={(e) => { setTokenAddress(e.target.value); }}
-                            className='w-full shadow-inner p-2 px-4 ring-1 ring-zinc-200 rounded-md outline-none bg-zinc-50 '
-                        />
-                    </div>
-                    <div className='flex flex-col gap-2'>
-                        <label htmlFor="admin">Admin</label>
-                        <input
-                            type="text"
-                            name="admin"
-                            id=""
-                            onChange={(e) => { setAdmin(e.target.value); }}
+                            onChange={(e) => { setminimalAmount(Number(e.target.value)); }}
                             className='w-full shadow-inner p-2 px-4 ring-1 ring-zinc-200 rounded-md outline-none bg-zinc-50 '
                         />
                     </div>
                 </div>
-                <Button type='button' className='max-w-max ml-auto' onClick={Createorg}>
-                    Create Company</Button>
+                <Button type='button' className='max-w-max ml-auto' onClick={AddHolder}>
+                    Create Holdertype</Button>
             </form>
         </Container>
     );

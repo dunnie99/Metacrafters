@@ -13,7 +13,7 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from "wagmi";
-import { Button } from "../components/button";
+import { Button } from "./Button";
 
 export function RegisterUser() {
   const [holderType, setholderType] = useState("");
@@ -30,20 +30,20 @@ export function RegisterUser() {
     AddUserWrite?.();
   };
 
-  const { config: IssueCertConfig } = usePrepareContractWrite({
+  const { config: createUserConfig } = usePrepareContractWrite({
     address: singleAccount,
     abi: child_abi,
-    functionName: "addMember",
+    functionName: "registerUser",
     args: [holderType, vestAmount, locktime],
   });
 
   const {
-    data: issueCertData,
-    isLoading: issueCertIsLoading,
-    isError: issueCertIsError,
-    write: issueCertWrite,
+    data: createUserData,
+    isLoading: createUserIsLoading,
+    isError: createUserIsError,
+    write: createUserWrite,
     isSuccess: Successfully,
-  } = useContractWrite(IssueCertConfig);
+  } = useContractWrite(createUserConfig);
 
   const {
     data: certAddr,
