@@ -12,7 +12,7 @@ cd OrgDapp
 code .
 ```
 
-To create this contract, we'll need to generate two files by following this step accordingly to clone the project:
+To create this contract, we'll need to generate the file by following this step accordingly to clone the project:
 ```
 $ git clone https://github.com/dunnie99/Metacrafters/tree/main/deFi-Dapp.git
 
